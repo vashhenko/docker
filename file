@@ -1,0 +1,29 @@
+# Используем родительский образ Debian
+FROM debian
+
+# Метаданные об образе
+LABEL maintainer="ITPlanet"
+LABEL owner="ITPlanet"
+
+# Постоянная переменная ENV
+ENV Name="ITPlanet"
+
+# Аргумент переменной ARG
+ARG Name="ITPlanet"
+
+# Копируем файл ITPlanet.txt в директорию /home/sin/
+COPY ITPlanet.txt /home/sin/
+
+# Устанавливаем Apache и другие необходимые пакеты
+RUN apt-get update && \
+    apt-get install -y apache2 mc htop net-tools nfs-common && \
+    apt-get clean
+
+# Указываем ServerName в конфигурационном файле Apache
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
+# Открываем порт 80
+EXPOSE 80
+
+# Команда для запуска сервера при старте контейнера
+CMD ["apache2ctl", "-D", "FOREGROUND"]
